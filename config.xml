@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+	Sample JFileAdapter configuration which uses a separate Java Transport and
+	Java Codec library to perform message transformation - in this case, the
+	Transport "tokenises" the input file into individual records, which are
+	passed the the Codec for transformation into a NormalisedEvent. The process
+	occurs in reverse for upstream flow.
+
+	$Copyright (c) 2004-2005, 2008 Progress Software Corporation. All Rights Reserved.$
+	$Copyright (c) 2013 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or Terracotta Inc., San Francisco, CA, USA, and/or Software AG (Canada) Inc., Cambridge, Ontario, Canada, and/or, Software AG (UK) Ltd., Derby, United Kingdom, and/or Software A.G. (Israel) Ltd., Or-Yehuda, Israel and/or their licensors.$
+	Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG
+-->
+
+<adapter-config	xmlns:xi="http://www.w3.org/2001/XInclude">
+
+	<logging 		level="INFO"  file="stdout" />
+	<plugin-logging level="DEBUG" file="plugins.log" />
+
+	<!-- Configure the embedded JVM with an initial heap size of 64MB -->
+	<java>
+		<jvm-option>-Xms64m</jvm-option>
+	</java>
+
+	<transports>
+		<transport
+			name="JStockTransport"
+			jarName="JStockAdapter.jar"
+			className="com.ericsson.stock.JStockTransport"
+		>
+  		</transport>
+  	</transports>
+
+	<xi:include	href="static.xml" xpointer="xpointer(/static/codecs)"/>
+	<xi:include	href="static.xml" xpointer="xpointer(/static/mapping)"/>
+
+	<apama>
+		<sinks>
+			<sink host="localhost" port="15903"/>
+		</sinks>
+		<sources>
+			<source host="localhost" port="15903" channels=""/>
+		</sources>
+	</apama>
+
+</adapter-config>

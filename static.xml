@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- $Copyright(c) 2007-2008 Progress Software Corporation. All Rights Reserved.$    -->
+<!-- $Copyright (c) 2013 Software AG, Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA, and/or Terracotta Inc., San Francisco, CA, USA, and/or Software AG (Canada) Inc., Cambridge, Ontario, Canada, and/or, Software AG (UK) Ltd., Derby, United Kingdom, and/or Software A.G. (Israel) Ltd., Or-Yehuda, Israel and/or their licensors.$    -->
+<!-- Use, reproduction, transfer, publication or disclosure is prohibited except as specifically provided for in your License Agreement with Software AG    -->
+
+<static>
+    <!-- This file contains all of the IAF's config file that end
+         users will not typically need to edit -->
+
+	<codecs>
+		<codec
+			name="JStockCodec"
+			jarName="JStockAdapter.jar"
+			className="com.ericsson.stock.JStockCodec"
+		>
+		</codec>
+	</codecs>
+
+	<mapping>
+		<logUnmappedDownstream file="unmapped_from_adapter.log"/>
+		<logUnmappedUpstream file="unmapped_from_correlator.log"/>
+
+		<event name="Stock" direction="downstream" encoder="JStockCodec" copyUnmappedToDictionaryPayload="true">
+			<id-rules>
+				<downstream>
+					<id fields="stockName,stockOpenPrice,stockBasePrice,stockPrice" test="hasValue"/>
+				</downstream>
+			</id-rules>
+			<mapping-rules>
+				<map apama="stockName" transport="stockName" type="string" default="error"/>
+				<map apama="stockOpenPrice" transport="stockOpenPrice" type="float" default="-1.0"/>
+				<map apama="stockBasePrice" transport="stockBasePrice" type="float" default="-1.0"/>
+				<map apama="stockPrice" transport="stockPrice" type="float" default="-1.0"/>
+			</mapping-rules>
+		</event>
+		<event name="alert" direction="upstream" encoder="JStockCodec">
+			<id-rules>
+				<upstream />
+			</id-rules>
+			<mapping-rules>
+				<map apama="stockName" transport="stockName" type="string" default="error"/>
+				<map apama="message" transport="message" type="string" default="hello"/>
+			</mapping-rules>
+		</event>
+
+
+
+	    	<event package="com.apama.oob" name="ReceiverDisconnected" direction="upstream" encoder="JStockCodec" inject="false">
+                        <id-rules>
+                                <upstream />
+                        </id-rules>
+                        <mapping-rules>
+                                <map type="string" default="OutOfBandReceiverDisconnected" transport="_name" />
+                                <map apama="physicalId" transport="physicalId" default="" type="string" />
+                                <map apama="logicalId" transport="logicalId" default="" type="string" />
+                        </mapping-rules>
+                </event>
+                <event package="com.apama.oob" name="ReceiverConnected" direction="upstream" encoder="JStockCodec" inject="false">
+                        <id-rules>
+                                <upstream />
+                        </id-rules>
+                        <mapping-rules>
+                                <map type="string" default="OutOfBandReceiverConnected" transport="_name" />
+                                <map apama="name" transport="appname" default="" type="string" />
+                                <map apama="host" transport="address" default="" type="string" />
+                                <map apama="physicalId" transport="physicalId" default="" type="string" />
+                                <map apama="logicalId" transport="logicalId" default="" type="string" />
+                        </mapping-rules>
+                </event>
+                <event package="com.apama.oob" name="SenderDisconnected" direction="upstream" encoder="JStockCodec" inject="false">
+                        <id-rules>
+                                <upstream />
+                        </id-rules>
+                        <mapping-rules>
+                                <map type="string" default="OutOfBandSenderDisconnected" transport="_name" />
+                                <map apama="physicalId" transport="physicalId" default="" type="string" />
+                                <map apama="logicalId" transport="logicalId" default="" type="string" />
+                        </mapping-rules>
+                </event>
+                <event package="com.apama.oob" name="SenderConnected" direction="upstream" encoder="JStockCodec" inject="false">
+                        <id-rules>
+                                <upstream />
+                        </id-rules>
+                        <mapping-rules>
+                                <map type="string" default="OutOfBandSenderConnected" transport="_name" />
+                                <map apama="name" transport="appname" default="" type="string" />
+                                <map apama="host" transport="address" default="" type="string" />
+                                <map apama="physicalId" transport="physicalId" default="" type="string" />
+                                <map apama="logicalId" transport="logicalId" default="" type="string" />
+                        </mapping-rules>
+                </event>
+ 
+      </mapping>
+</static>

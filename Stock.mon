@@ -1,0 +1,43 @@
+//The event type
+
+event Stock {
+	string stockName;
+	float stockOpenPrice;
+	float stockBasePrice;
+	float stockPrice;
+	dictionary<string,string> __payload;
+}
+
+event alert{
+	string stockName;
+	string message;
+}
+
+// The monitor itself
+
+monitor simple { 
+
+	integer counter := 0;
+	action onload {
+		
+		Stock stock;
+	    integer volume;
+	    
+		on all Stock():stock {
+			counter := counter + 1;
+			log "counter=" + counter.toString(); 
+			Stock stock_late;
+			on all Stock(stockName = stock.stockName, stockOpenPrice > 0.0):stock_late within(300.0){
+				float increaseRate := (stock_late.stockPrice-stock.stockPrice)/stock.stockBasePrice;
+				//if(increaseRate > 0.02) then {
+					emit alert(stock.stockName, "sharply increasing right now, increased by " + increaseRate.toString() + " from:" + stock.stockPrice.toString() + " to:" + stock_late.stockPrice.toString() + " currentTime:" + currentTime.toString());
+				//}
+			}
+			log "counter = "+counter.toString(); //打印到correlator窗口上了
+			//print "Volume = "+stock.stockName;
+			if(counter = 100) then {
+			    emit alert("100 counter", "!!!!!!!!!!!!!!!!!!!!");//打印在engine_receive的窗口上
+			}
+		}
+	} 
+}
